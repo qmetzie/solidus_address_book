@@ -1,7 +1,7 @@
 SolidusAddressBook
 ==================
 
-Introduction goes here.
+This extension allows registered users to have multiple shipping & billing addresses and select each of them on checkout.
 
 Installation
 ------------
@@ -9,7 +9,7 @@ Installation
 Add solidus_address_book to your Gemfile:
 
 ```ruby
-gem 'solidus_address_book'
+gem 'solidus_address_book', github: 'qmetzie/solidus_address_book'
 ```
 
 Bundle your dependencies and run the installation generator:
@@ -36,4 +36,4 @@ Simply add this require statement to your spec_helper:
 require 'solidus_address_book/factories'
 ```
 
-Copyright (c) 2018 [name of extension creator], released under the New BSD License
+Copyright (c) 2018 [Contributors](https://github.com/solidusio-contrib/solidus_address_book/graphs/contributors), released under the New BSD License
