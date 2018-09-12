@@ -10,7 +10,7 @@ module SolidusAddressBook
     end
 
     initializer "spree.address_book.environment", :before => :load_config_initializers do |app|
-      Solidus::AddressBook::Config = Solidus::AddressBookConfiguration.new
+      Spree::AddressBook::Config = Spree::AddressBookConfiguration.new
     end
 
     config.autoload_paths += %W(#{config.root}/lib)
