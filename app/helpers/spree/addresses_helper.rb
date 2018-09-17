@@ -30,4 +30,16 @@ module Spree::AddressesHelper
       content_tag(:noscript, form.text_field(:state_name, :class => 'required')) +
       javascript_tag("document.write(\"#{state_elements.html_safe}\");")
   end
+
+  def address_city(form, state, address_id = "b")
+    city_elements = [
+      form.collection_select(:city_id, state ? state.cities.order(:name) : [],
+                            :id, :name,
+                            {:include_blank => true},
+                            {:class => "required form-control"})
+      ].join.gsub('"', "'").gsub("\n", "")
+
+    form.label(:city, t(:city)) + '<span class="req">*</span><br />'.html_safe +
+      javascript_tag("document.write(\"#{city_elements.html_safe}\");")
+  end
 end
