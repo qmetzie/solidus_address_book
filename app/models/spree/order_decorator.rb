@@ -4,7 +4,7 @@
 ]).flatten!
 
 Spree::Order.class_eval do
-  before_validation :clone_shipping_address, if: "SolidusUserAddressBook::Config[:disable_bill_address]"
+  before_validation :clone_shipping_address, if: -> { SolidusAddressBook::Config[:disable_bill_address] }
 
   def clone_shipping_address
     if self.ship_address
