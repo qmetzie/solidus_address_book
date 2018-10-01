@@ -5,15 +5,20 @@
 Spree::Address.class_eval do
   belongs_to :user, class_name: Spree.user_class.name
 
+  def self.default
+    build_default
+  end
+
   def self.required_fields
     Spree::Address.validators.map do |v|
       v.kind_of?(ActiveModel::Validations::PresenceValidator) ? v.attributes : []
     end.flatten
   end
 
-  # Override this method to false
+  # Override this method
   def readonly?
-    false
+    return false if skip_forced_readonly?
+    persisted?
   end
 
   # TODO: look into if this is actually needed. I don't want to override methods unless it is really needed
@@ -46,10 +51,19 @@ Spree::Address.class_eval do
   # UPGRADE_CHECK if future versions of spree have a custom destroy function, this will break
   def destroy
     if can_be_deleted?
+      self.skip_forced_readonly
       super
     else
       update_column :deleted_at, Time.now
     end
+  end
+
+  def skip_forced_readonly?
+    self.instance_variable_get("@_skip_force_readonly")
+  end
+
+  def skip_forced_readonly
+    self.instance_variable_set("@_skip_force_readonly", true)
   end
 
   def check

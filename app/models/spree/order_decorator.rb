@@ -1,9 +1,10 @@
+
 (Spree::PermittedAttributes.class_variable_get("@@checkout_attributes") << [
   :bill_address_id, :ship_address_id
 ]).flatten!
 
 Spree::Order.class_eval do
-  before_validation :clone_shipping_address, if: -> { Solidus::AddressBook::Config[:disable_bill_address] }
+  before_validation :clone_shipping_address, if: "SolidusUserAddressBook::Config[:disable_bill_address]"
 
   def clone_shipping_address
     if self.ship_address
@@ -20,7 +21,7 @@ Spree::Order.class_eval do
   end
 
   def bill_address_id=(id)
-    address = Spree::Address.where(:id => id).first
+    address = Spree::Address.where(id: id).first
     if address && address.user_id == self.user_id
       self["bill_address_id"] = address.id
       self.user.update_attribute(:bill_address_id, address.id)
@@ -36,7 +37,7 @@ Spree::Order.class_eval do
   end
 
   def ship_address_id=(id)
-    address = Spree::Address.where(:id => id).first
+    address = Spree::Address.where(id: id).first
     if address && address.user_id == self.user_id
       self["ship_address_id"] = address.id
       self.user.update_attribute(:ship_address_id, address.id)
@@ -47,7 +48,7 @@ Spree::Order.class_eval do
   end
 
   def ship_address_attributes=(attributes)
-    self.ship_address = update_or_create_address(attributes)
+    self.ship_address      = update_or_create_address(attributes)
     self.user.ship_address = self.ship_address if self.user
   end
 
@@ -66,9 +67,9 @@ Spree::Order.class_eval do
 
   def update_addresses_params
     self.bill_address_attributes = @updating_params["order"].delete("bill_address_attributes")
-    self.bill_address_id = @updating_params["order"].delete("bill_address_id")
+    self.bill_address_id         = @updating_params["order"].delete("bill_address_id")
     self.ship_address_attributes = @updating_params["order"].delete("ship_address_attributes")
-    self.ship_address_id = @updating_params["order"].delete("ship_address_id")
+    self.ship_address_id         = @updating_params["order"].delete("ship_address_id")
   end
 
   def update_or_create_address(attributes = {})
@@ -85,6 +86,7 @@ Spree::Order.class_eval do
       attributes.delete(:id)
 
       if address && address.editable?
+        address.skip_forced_readonly
         address.update_attributes(attributes)
         return address
       else

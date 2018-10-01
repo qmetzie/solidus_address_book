@@ -1,7 +1,7 @@
 <% address_id = address_type.chars.first %>
 
 <% ADDRESS_FIELDS.each do |field| %>
-  <% if field == "country" && !Solidus::AddressBook::Config[:hide_country_field] %>
+  <% if field == "country" && !SolidusAddressBook::Config[:hide_country_field] %>
     <p class="form-group" id="<%= "#{address_id}country" %>">
       <%= address_form.label :country_id, Spree.t(:country) %><span class="required">*</span><br />
       <span id="<%= "#{address_id}country-selection" %>">
@@ -10,10 +10,10 @@
     </p>
   <% elsif field == "state" %>
     <%= address_field(address_form, :state, address_id) { address_state(address_form, address.country, address_id) } if Spree::Config[:address_requires_state] %>
-  <% elsif field == "city" && Solidus::AddressBook::Config[:has_city_model] %>
+  <% elsif field == "city" && SolidusAddressBook::Config[:has_city_model] %>
     <%= address_field(address_form, :city, address_id) { address_city(address_form, address.state, address_id) } %>
   <% else %>
-    <% next if field == "country" && Solidus::AddressBook::Config[:hide_country_field] %>
+    <% next if field == "country" && SolidusAddressBook::Config[:hide_country_field] %>
     <% next if field == "company" && !Spree::Config[:company] %>
     <% next if field == "alternative_#{address_id}_phone" && !Spree::Config["alternative_#{address_id}_phone"] %>
     <%= address_field(address_form, field.to_sym, address_id) %>
